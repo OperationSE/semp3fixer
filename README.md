@@ -34,7 +34,7 @@ I suggest you create a `venv` and use that to install the prerequisites
 python -m venv venv
 source venv/bin/activate # .\venv\Scripts\activate.ps1 if you're on Windows
 pip install -r requirements.txt
-python semp3fixer.py <source_folder> <destination_folder> # You can optionally specify the FFMPEG path in case it's not in $PATH 
+python semp3fixer.py -i <source_folder> -o <destination_folder> # You can optionally specify the FFMPEG path in case it's not in $PATH 
 ```
 
 ## Preview
