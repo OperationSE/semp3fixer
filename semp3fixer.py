@@ -25,9 +25,6 @@ but I'm pretty adamant it'll work with the rest of the formats.
 The cover art is resized to 500x500 as the Walkman parsers generally don't support anything higher than that.
 For some reason, Walkman 3.0 only supports the YUV420 pixel format, even though Walkman 2.0 parses YUV444 just fine.
 
-The audio codec is set to libfdk_aac because that's the best one that's supported by ffmpeg 
-(it's not usually built-in though I had to build ffmpeg myself on Windows to get this codec, cf: https://github.com/m-ab-s/media-autobuild_suite)
-
 The script assumes FFMPEG is in PATH, but you can specify the path to the executable with the --ffmpeg-path argument.
 
 The metadata_fix function is here to remove all the useless tags that the Walkman 2.0 parser doesn't like
