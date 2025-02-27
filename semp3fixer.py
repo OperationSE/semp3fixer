@@ -69,8 +69,8 @@ def convert_file(input_file, output_folder, ffmpeg_path):
 
 def main():
     parser = ap.ArgumentParser(description="Converts any audio files to MP3 and fixes metadata for Sony Ericsson phones")
-    parser.add_argument("-i", "--input_folder", help="Folder containing the audio files")
-    parser.add_argument("-o", "--output_folder", help="Folder where the converted files will be saved")
+    parser.add_argument("-i", "--input_folder", help="Folder containing the audio files", required=True)
+    parser.add_argument("-o", "--output_folder", help="Folder where the converted files will be saved", required=True)
     parser.add_argument("--ffmpeg-path", help="Path to the ffmpeg executable", default="ffmpeg")
     args = parser.parse_args()
 
