@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import subprocess 
 import argparse as ap
 
@@ -56,11 +58,11 @@ def create_output_folder(output_folder, root_input_folder, matched_file):
     makedirs(output_subfolder, exist_ok=True)
     return output_subfolder
 
-def convert_file(input_file, output_folder, ffmpeg_path):
+def convert_file(input_file, output_folder, bitrate, ffmpeg_path):
     flags = "-hide_banner -loglevel error"
     output_filename = splitext(basename(input_file))[0] + ".mp3"
     output_file = join(output_folder, output_filename)
-    command = f"{ffmpeg_path} {flags} -i \"{input_file}\" -pix_fmt yuv420p -vf scale=500:500 -map 0:0 -c:a mp3 -b:a 192k -map 0:1 -map_metadata 0 -c:v mjpeg \"{output_file}\""
+    command = f"{ffmpeg_path} {flags} -i \"{input_file}\" -pix_fmt yuv420p -vf scale=500:500 -map 0:0 -c:a mp3 -b:a {bitrate} -map 0:1 -map_metadata 0 -c:v mjpeg \"{output_file}\""
     subprocess.run(command, shell=True)
     return output_file
 
@@ -69,6 +71,7 @@ def main():
     parser.add_argument("-i", "--input_folder", help="Folder containing the audio files", required=True)
     parser.add_argument("-o", "--output_folder", help="Folder where the converted files will be saved", required=True)
     parser.add_argument("--ffmpeg-path", help="Path to the ffmpeg executable", default="ffmpeg")
+    parser.add_argument("-b", "--bitrate", help="MP3 bitrate (default is '192k')", default="192k")
     args = parser.parse_args()
 
     if not isdir(args.input_folder):
@@ -85,7 +88,7 @@ def main():
     try: 
         for file in tqdm(files, desc="Converting files", unit="file"):
             output_folder = create_output_folder(args.output_folder, args.input_folder, file)
-            output_file = convert_file(file, output_folder, args.ffmpeg_path)
+            output_file = convert_file(file, output_folder, args.bitrate, args.ffmpeg_path)
             metadata_fix(output_file)
     except KeyboardInterrupt:
         print(Fore.RED + "\n[!] Conversion interrupted" + Fore.RESET)
