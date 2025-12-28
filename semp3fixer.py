@@ -14,7 +14,6 @@ from mutagen.id3 import COMM
 from colorama import Fore, Style
 from tqdm import tqdm
 
-
 # Original author: sdardouchi for OperationSE
 """
 A few notes are needed here:
@@ -36,10 +35,10 @@ The script will create the output folder structure as the input folder, so if yo
 and you have a file in /path/to/input/folder/Linkin Park - Hybrid Theory/01 - Papercut.flac (could be any file format listed in the script really)
 the output file will be in /path/to/output/folder/Linkin Park - Hybrid Theory/01 - Papercut.mp3
 """
-
+ 
 def metadata_fix(mp3_file):
     mp3 = MP3(mp3_file)
-     
+    
     # Remove all comments and useless tags
     # Remove description on APIC tag (for some reason the parser breaks when there's one)
     for k,v in mp3.tags.items():
@@ -59,11 +58,23 @@ def create_output_folder(output_folder, root_input_folder, matched_file):
     return output_subfolder
 
 def convert_file(input_file, output_folder, bitrate, ffmpeg_path):
-    flags = "-hide_banner -loglevel error"
     output_filename = splitext(basename(input_file))[0] + ".mp3"
     output_file = join(output_folder, output_filename)
-    command = f"{ffmpeg_path} {flags} -i \"{input_file}\" -pix_fmt yuv420p -vf scale=500:500 -map 0:0 -c:a mp3 -b:a {bitrate} -map 0:1 -map_metadata 0 -c:v mjpeg \"{output_file}\""
-    subprocess.run(command, shell=True)
+    command = [
+        ffmpeg_path, 
+        "-hide_banner", "-loglevel", "error", 
+        "-i", input_file, 
+        "-pix_fmt", "yuv420p", 
+        "-vf", "scale=500:500", 
+        "-map", "0:0", 
+        "-c:a", "mp3", 
+        "-b:a", bitrate,
+        "-map", "0:1",
+        "-map_metadata", "0",
+        "-c:v", "mjpeg",
+        output_file
+    ]
+    subprocess.run(command)
     return output_file
 
 def main():
@@ -84,6 +95,9 @@ def main():
     print(Fore.GREEN + f"[✓] Found {len(files)} audio files to convert" + Fore.RESET)
     print(Fore.LIGHTGREEN_EX + f"[i] Output folder: {args.output_folder}")
     print(Fore.LIGHTGREEN_EX + f"[i] Starting conversion" + Fore.RESET)
+
+    if not args.output_folder.endswith('/'):
+        args.output_folder += '/'
 
     try: 
         for file in tqdm(files, desc="Converting files", unit="file"):
